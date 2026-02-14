@@ -34,7 +34,7 @@ def predict():
 
     customer_dict = customer.to_dict()
 
-    # Extract features
+   
     features = [
         float(customer_dict['CreditScore']),
         float(customer_dict['Age']),
@@ -45,10 +45,10 @@ def predict():
         float(customer_dict['EstimatedSalary'])
     ]
 
-    # Churn prediction
+   
     prediction, stay_prob, churn_prob = predict_churn(features)
 
-    # Loan repayment
+    
     repay_prob, default_prob = calculate_loan_repayment_probability(customer_dict)
 
     if prediction == 1:
@@ -67,4 +67,5 @@ def predict():
     )
 
 if __name__ == "__main__":
+
     app.run(host="0.0.0.0", port=5000)
