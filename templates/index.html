@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Risk Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f8fb;
+        }
+
+        header {
+            background: linear-gradient(90deg, #1e88e5, #26a69a);
+            color: white;
+            padding: 20px 40px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        input {
+            padding: 12px;
+            width: 280px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 12px 18px;
+            border-radius: 10px;
+            border: none;
+            background: #1e88e5;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1565c0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        table td:first-child {
+            font-weight: 600;
+            color: #555;
+            width: 40%;
+        }
+
+        .risk-high {
+            color: #ef5350;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .risk-low {
+            color: #26a69a;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        canvas {
+            max-width: 350px;
+            margin: auto;
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .charts {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Customer Risk & Loan Analytics
+</header>
+
+<div class="container">
+
+    <!-- SEARCH -->
+    <div class="card">
+        <form action="/predict" method="post" class="search-box">
+            <input type="text" name="customer_id" placeholder="Enter Customer ID" required>
+            <button type="submit">Analyze</button>
+        </form>
+    </div>
+
+    {% if customer %}
+
+    <!-- FULL CUSTOMER DETAILS -->
+    <div class="card">
+        <h2>Customer Profile</h2>
+        <table>
+            {% for key, value in customer.items() %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    {% endif %}
+
+    {% if stay is defined %}
+
+    <!-- CHURN RESULT -->
+    <div class="card">
+        <h2>Churn Analysis</h2>
+
+        {% if churn > stay %}
+            <p class="risk-high">⚠ High Risk of Churn ({{ churn }}%)</p>
+        {% else %}
+            <p class="risk-low">✔ Customer Likely to Stay ({{ stay }}%)</p>
+        {% endif %}
+
+        <canvas id="churnChart"></canvas>
+    </div>
+
+    <!-- LOAN REPAYMENT -->
+    <div class="card">
+        <h2>Loan Repayment Risk</h2>
+
+        {% if repay < 50 %}
+            <p class="risk-high">⚠ High Default Risk ({{ default }}%)</p>
+        {% else %}
+            <p class="risk-low">✔ Strong Repayment Probability ({{ repay }}%)</p>
+        {% endif %}
+
+        <canvas id="loanChart"></canvas>
+    </div>
+
+    <script>
+        const stay = parseFloat("{{ stay }}");
+        const churn = parseFloat("{{ churn }}");
+        const repay = parseFloat("{{ repay }}");
+        const def = parseFloat("{{ default }}");
+
+        new Chart(document.getElementById("churnChart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["Stay %", "Churn %"],
+                datasets: [{
+                    data: [stay, churn],
+                    backgroundColor: ["#26a69a", "#ef5350"]
+                }]
+            },
+            options: {
+                cutout: "70%",
+                plugins: { legend: { position: "bottom" } }
+            }
+        });
+
+        new Chart(document.getElementById("loanChart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["Repayment %", "Default %"],
+                datasets: [{
+                    data: [repay, def],
+                    backgroundColor: ["#1e88e5", "#ef5350"]
+                }]
+            },
+            options: {
+                cutout: "70%",
+                plugins: { legend: { position: "bottom" } }
+            }
+        });
+    </script>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
