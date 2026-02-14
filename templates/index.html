@@ -114,7 +114,7 @@
 
 <div class="container">
 
-    <!-- SEARCH -->
+   
     <div class="card">
         <form action="/predict" method="post" class="search-box">
             <input type="text" name="customer_id" placeholder="Enter Customer ID" required>
@@ -124,7 +124,7 @@
 
     {% if customer %}
 
-    <!-- FULL CUSTOMER DETAILS -->
+   
     <div class="card">
         <h2>Customer Profile</h2>
         <table>
@@ -141,7 +141,7 @@
 
     {% if stay is defined %}
 
-    <!-- CHURN RESULT -->
+   
     <div class="card">
         <h2>Churn Analysis</h2>
 
@@ -154,7 +154,7 @@
         <canvas id="churnChart"></canvas>
     </div>
 
-    <!-- LOAN REPAYMENT -->
+   
     <div class="card">
         <h2>Loan Repayment Risk</h2>
 
@@ -209,4 +209,5 @@
 </div>
 
 </body>
+
 </html>
