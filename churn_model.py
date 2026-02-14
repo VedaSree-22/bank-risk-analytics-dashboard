@@ -2,14 +2,14 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-# Load dataset
+
 data = pd.read_csv("Churn_Modelling.csv")
 data.columns = data.columns.str.strip()
 
-# Convert CustomerId to string
+
 data['CustomerId'] = data['CustomerId'].astype(str).str.strip()
 
-# Features for churn prediction
+
 feature_columns = [
     'CreditScore',
     'Age',
@@ -28,7 +28,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# Random Forest Model
+
 model = RandomForestClassifier(
     n_estimators=300,
     max_depth=10,
@@ -39,7 +39,7 @@ model = RandomForestClassifier(
 model.fit(X_train, y_train)
 
 
-# Get customer details
+
 def get_customer_details(customer_id):
     customer = data[data['CustomerId'] == str(customer_id)]
     if customer.empty:
@@ -47,7 +47,7 @@ def get_customer_details(customer_id):
     return customer.iloc[0]
 
 
-# Predict churn
+
 def predict_churn(features):
     prediction = model.predict([features])
     probability = model.predict_proba([features])
@@ -58,7 +58,7 @@ def predict_churn(features):
     return prediction[0], round(stay_prob, 2), round(churn_prob, 2)
 
 
-# Loan repayment probability (engineered feature)
+
 def calculate_loan_repayment_probability(customer):
 
     credit = customer['CreditScore']
@@ -77,5 +77,6 @@ def calculate_loan_repayment_probability(customer):
 
     repayment_probability = min(score, 100)
     default_probability = 100 - repayment_probability
+
 
     return round(repayment_probability, 2), round(default_probability, 2)
